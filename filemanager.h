@@ -14,8 +14,8 @@ private:
 
 public:
     // Constructor
-    FileManager(const string& booksFile = "books.txt", 
-                const string& usersFile = "users.txt");
+    FileManager(const string& booksFile = "data/books.txt", 
+                const string& usersFile = "data/users.txt");
     
     // File operations
     bool saveLibraryData(Library& library);

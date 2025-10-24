@@ -1,9 +1,28 @@
 #include <iostream>
 #include <algorithm>
+#include <tuple>
+#include <cctype>
 
 #include "library.h"
 
 using namespace std;
+
+namespace {
+string normalizeForCompare(string value) {
+    transform(value.begin(), value.end(), value.begin(),
+              [](unsigned char ch) { return static_cast<char>(tolower(ch)); });
+    return value;
+}
+
+bool compareBooksByTitleAuthor(const Book* lhs, const Book* rhs) {
+    return make_tuple(normalizeForCompare(lhs->getTitle()),
+                      normalizeForCompare(lhs->getAuthor()),
+                      lhs->getISBN()) <
+           make_tuple(normalizeForCompare(rhs->getTitle()),
+                      normalizeForCompare(rhs->getAuthor()),
+                      rhs->getISBN());
+}
+}
 
 // Constructor
 Library::Library() {}
@@ -51,6 +70,7 @@ vector<Book*> Library::searchBooksByTitle(const string& title) {
             results.push_back(book.get());
         }
     }
+    sort(results.begin(), results.end(), compareBooksByTitleAuthor);
     return results;
 }
 
@@ -68,6 +88,7 @@ vector<Book*> Library::searchBooksByAuthor(const string& author) {
             results.push_back(book.get());
         }
     }
+    sort(results.begin(), results.end(), compareBooksByTitleAuthor);
     return results;
 }
 
@@ -79,6 +100,7 @@ vector<Book*> Library::getAvailableBooks() {
             available.push_back(book.get());
         }
     }
+    sort(available.begin(), available.end(), compareBooksByTitleAuthor);
     return available;
 }
 
@@ -88,6 +110,7 @@ vector<Book*> Library::getAllBooks() {
     for (auto& book : books) {
         allBooks.push_back(book.get());
     }
+    sort(allBooks.begin(), allBooks.end(), compareBooksByTitleAuthor);
     return allBooks;
 }
 
@@ -152,11 +175,18 @@ void Library::displayAllBooks() {
         cout << "Aucun livre dans la bibliothèque.\n";
         return;
     }
-    
+
+    vector<Book*> sortedBooks;
+    sortedBooks.reserve(books.size());
+    for (auto& book : books) {
+        sortedBooks.push_back(book.get());
+    }
+    sort(sortedBooks.begin(), sortedBooks.end(), compareBooksByTitleAuthor);
+
     cout << "\n=== TOUS LES LIVRES ===\n";
-    for (size_t i = 0; i < books.size(); ++i) {
+    for (size_t i = 0; i < sortedBooks.size(); ++i) {
         cout << "\nLivre " << (i + 1) << " :\n";
-        cout << books[i]->toString() << "\n";
+        cout << sortedBooks[i]->toString() << "\n";
         cout << "-------------------------\n";
     }
 }
@@ -171,6 +201,7 @@ void Library::displayAvailableBooks() {
     }
     
     cout << "\n=== LIVRES DISPONIBLES ===\n";
+    sort(available.begin(), available.end(), compareBooksByTitleAuthor);
     for (size_t i = 0; i < available.size(); ++i) {
         cout << "\nLivre " << (i + 1) << " :\n";
         cout << available[i]->toString() << "\n";

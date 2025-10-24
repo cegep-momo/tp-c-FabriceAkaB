@@ -23,8 +23,8 @@ void displayMenu() {
     cout << "2.  Supprimer un Livre\n";
     cout << "3.  Rechercher des Livres par Titre\n";
     cout << "4.  Rechercher des Livres par Auteur\n";
-    cout << "5.  Afficher Tous les Livres\n";
-    cout << "6.  Afficher les Livres Disponibles\n";
+    cout << "5.  Afficher Tous les Livres (tri Titre->Auteur)\n";
+    cout << "6.  Afficher les Livres Disponibles (tri Titre->Auteur)\n";
     cout << "7.  Ajouter un Utilisateur\n";
     cout << "8.  Afficher Tous les Utilisateurs\n";
     cout << "9.  Emprunter un Livre\n";
@@ -84,9 +84,20 @@ int main() {
                 break;
             }
             
-            case 2: { // Remove Book
+            case 2: { // Remove Book (avec confirmation)
                 string isbn = getInput("Entrez l'ISBN du livre à supprimer : ");
-                
+
+                // Demande de confirmation
+                cout << "Êtes-vous sûr de vouloir supprimer ce livre ? (o/N) ";
+                string r; getline(cin, r);
+                bool confirmed = !r.empty() && (r=="o" || r=="O" || r=="oui" || r=="Oui");
+
+                if (!confirmed) {
+                    cout << "Suppression annulée.\n";
+                    pauseForInput();
+                    break;
+                }
+
                 if (library.removeBook(isbn)) {
                     cout << "Livre supprimé avec succès !\n";
                 } else {
@@ -95,7 +106,7 @@ int main() {
                 pauseForInput();
                 break;
             }
-            
+
             case 3: { // Search by Title
                 string title = getInput("Entrez le titre à rechercher : ");
                 auto results = library.searchBooksByTitle(title);
