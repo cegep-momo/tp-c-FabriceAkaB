@@ -1,12 +1,17 @@
+aa|aa|12|1|
+aaa|aa|2|1|
 Andromaque|Jean Racine|9782070380817|0|Anne Moreau
 Atala|Chateaubriand|9782070360062|0|Lisa Girard
 Bel-Ami|Guy de Maupassant|9782253005070|0|Claire Bernard
 Britannicus|Jean Racine|9782070380824|1|
+c|d|432|1|
+c|e|543|1|
 Candide|Voltaire|9782070380015|1|
 Consuelo|George Sand|9782253005118|1|
 Corinne|Madame de Staël|9782070360086|1|
 De l'esprit des lois|Montesquieu|9782070381018|1|
 Dom Juan|Molière|9782070380787|1|
+fdsgs|fd|43433|1|
 François le Champi|George Sand|9782253005094|1|
 Germinal|Émile Zola|9782253004226|0|Sophie Lemaire
 Indiana|George Sand|9782070360093|0|Thomas Blanc
@@ -39,4 +44,4 @@ Pensées|Blaise Pascal|9782070380994|0|Nicolas Petit
 Phèdre|Jean Racine|9782070380800|1|
 René|Chateaubriand|9782070360079|1|
 Tartuffe|Molière|9782070380770|1|
-aaa|aa|2|1|
+tt|dsf|1|0|tt

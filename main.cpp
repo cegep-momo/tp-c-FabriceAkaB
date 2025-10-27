@@ -178,6 +178,9 @@ int main() {
                 string userId = getInput("Entrez l'ID de l'utilisateur : ");
                 
                 if (library.checkOutBook(isbn, userId)) {
+                    User* borrower = library.findUserById(userId);
+                    string borrowerName = borrower ? borrower->getName() : "";
+                    fileManager.logActivity("EMPRUNT", userId, borrowerName, isbn);
                     cout << "Livre emprunté avec succès !\n";
                 } else {
                     cout << "Erreur : Impossible d'emprunter le livre. Vérifiez l'ISBN, l'ID utilisateur et la disponibilité du livre.\n";
@@ -188,8 +191,23 @@ int main() {
             
             case 10: { // Return Book
                 string isbn = getInput("Entrez l'ISBN du livre à retourner : ");
+                string borrowerName;
+                string borrowerId;
+
+                Book* book = library.findBookByISBN(isbn);
+                if (book && !book->getAvailability()) {
+                    borrowerName = book->getBorrowerName();
+                    auto users = library.getAllUsers();
+                    for (User* user : users) {
+                        if (user->hasBorrowedBook(isbn)) {
+                            borrowerId = user->getUserId();
+                            break;
+                        }
+                    }
+                }
                 
                 if (library.returnBook(isbn)) {
+                    fileManager.logActivity("RETOUR", borrowerId, borrowerName, isbn);
                     cout << "Livre retourné avec succès !\n";
                 } else {
                     cout << "Erreur : Impossible de retourner le livre. Vérifiez l'ISBN et que le livre est bien emprunté.\n";

@@ -1,13 +1,31 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+#include <chrono>
+#include <iomanip>
+#include <ctime>
 #include "filemanager.h"
 
 using namespace std;
 
+namespace {
+std::tm makeLocalTime(std::time_t rawTime) {
+    std::tm timeInfo{};
+#if defined(_WIN32)
+    localtime_s(&timeInfo, &rawTime);
+#else
+    localtime_r(&rawTime, &timeInfo);
+#endif
+    return timeInfo;
+}
+}
+
 // Constructor
-FileManager::FileManager(const string& booksFile, const string& usersFile)
-    : booksFileName(booksFile), usersFileName(usersFile) {}
+FileManager::FileManager(const string& booksFile, const string& usersFile,
+                         const string& activityLogFile)
+    : booksFileName(booksFile),
+      usersFileName(usersFile),
+      activityLogFileName(activityLogFile) {}
 
 // Save all library data
 bool FileManager::saveLibraryData(Library& library) {
@@ -120,4 +138,26 @@ void FileManager::createBackup() {
     }
     
     cout << "Fichiers de sauvegarde créés.\n";
+}
+
+void FileManager::logActivity(const string& action,
+                              const string& userId,
+                              const string& userName,
+                              const string& isbn) {
+    ofstream logFile(activityLogFileName, ios::app);
+    if (!logFile.is_open()) {
+        cout << "Erreur : Impossible d'ouvrir " << activityLogFileName << " en écriture.\n";
+        return;
+    }
+
+    auto now = chrono::system_clock::now();
+    time_t nowTime = chrono::system_clock::to_time_t(now);
+    tm localTime = makeLocalTime(nowTime);
+
+    logFile << put_time(&localTime, "%Y-%m-%d %H:%M:%S")
+            << " | " << action
+            << " | " << (userId.empty() ? "-" : userId)
+            << " | " << (userName.empty() ? "-" : userName)
+            << " | " << (isbn.empty() ? "-" : isbn)
+            << '\n';
 }
